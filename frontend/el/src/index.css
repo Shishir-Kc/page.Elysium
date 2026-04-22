@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme {
+  --color-obsidian: #0A0A0A;
+  --color-void: #141414;
+  --color-charcoal: #1F1F1F;
+  --color-graphite: #2C2C2C;
+  --color-ash: #555555;
+  --color-fog: #888888;
+  --color-silver: #C4C4C4;
+  --color-ivory: #F5F5F5;
+
+  --color-background: var(--color-obsidian);
+  --color-foreground: var(--color-ivory);
+  --color-popover: #141414e6;
+  --color-popover-foreground: var(--color-ivory);
+  --color-muted: var(--color-charcoal);
+  --color-muted-foreground: var(--color-fog);
+  --color-accent: var(--color-charcoal);
+  --color-accent-foreground: var(--color-ivory);
+  --color-border: var(--color-ash);
+  --color-input: var(--color-graphite);
+  --color-ring: var(--color-fog);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  /* Literal hex – avoids FOUC before Tailwind @theme vars resolve */
+  background-color: #0A0A0A;
+  color: #F5F5F5;
+  overflow: hidden;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
