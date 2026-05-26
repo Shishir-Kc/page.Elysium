@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ─── */
+:root {
+  --bg:         #000000;
+  --bg-2:       #0a0a0a;
+  --bg-3:       #121212;
+  --bg-4:       #1a1a1a;
+  --accent:     #ffffff;
+  --accent-dim: #cccccc;
+  --accent-glow: rgba(255, 255, 255, 0.12);
+  --text-1:     #ffffff;
+  --text-2:     #a3a3a3;
+  --text-3:     #525252;
+  --border:     #262626;
+  --border-2:   #404040;
+}
+
+/* ─── Tailwind v4 Theme ─── */
+@theme {
+  --color-bg:         var(--bg);
+  --color-bg-2:       var(--bg-2);
+  --color-bg-3:       var(--bg-3);
+  --color-bg-4:       var(--bg-4);
+  --color-accent:     var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-accent-glow: var(--accent-glow);
+  --color-text-1:     var(--text-1);
+  --color-text-2:     var(--text-2);
+  --color-text-3:     var(--text-3);
+  --color-border:     var(--border);
+  --color-border-2:   var(--border-2);
+
+  --font-serif: "Cormorant Garamond", "Georgia", serif;
+  --font-sans:  "DM Sans", system-ui, sans-serif;
+  --font-mono:  "JetBrains Mono", "Menlo", monospace;
+}
+
+/* ─── Global Reset ─── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-1);
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: rgba(255, 255, 255, 0.25);
+  color: var(--text-1);
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-2);
+  border-radius: 3px;
+}
+
+/* ─── Cursor Blink (only allowed keyframes) ─── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ─── Utility: Dot Grid Background ─── */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
