@@ -110,7 +110,7 @@ export default function Hero() {
               lineHeight: 1.7,
             }}
           >
-            A Python-based AI agent for developers who think in systems.
+            Personal Home AI Assistant
           </p>
         </motion.div>
 
