@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const containerVariants = {
@@ -23,6 +24,17 @@ const itemVariants = {
 };
 
 export default function Hero() {
+  const [copied, setCopied] = useState(false);
+
+  const installCmd = 'curl -fsSL https://elysium.shishirkhatri.com.np/install.sh | sh';
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(installCmd).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
   return (
     <section
       style={{
@@ -125,8 +137,10 @@ export default function Hero() {
             marginTop: '36px',
           }}
         >
-          {/* Deploy Command Placeholder */}
+          {/* Install Command */}
           <div
+            onClick={handleCopy}
+            title="Click to copy"
             style={{
               background: 'rgba(0,0,0,0.3)',
               border: '1px solid var(--border)',
@@ -138,11 +152,14 @@ export default function Hero() {
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              cursor: 'default',
+              cursor: 'pointer',
+              transition: 'border-color 0.2s ease',
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)' }}
           >
             <span style={{ color: 'var(--accent)' }}>$</span>
-            <span>it will be ready soon!</span>
+            <span>{copied ? 'Copied!' : installCmd}</span>
           </div>
 
           {/* Button B: View on GitHub */}
