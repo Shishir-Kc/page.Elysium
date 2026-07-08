@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Status from './Status';
+import Toast from './Toast';
 
 const containerVariants = {
   hidden: {},
@@ -25,18 +26,20 @@ const itemVariants = {
 };
 
 export default function Hero() {
-  const [copied, setCopied] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
 
   const installCmd = 'curl -fsSL https://elysium.shishirkhatri.com.np/install.sh | sh';
 
   const handleCopy = () => {
     navigator.clipboard.writeText(installCmd).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setToastVisible(true);
+      setTimeout(() => setToastVisible(false), 2000);
     });
   };
 
   return (
+    <>
+      <Toast message="Copied to clipboard" visible={toastVisible} />
     <section
       style={{
         height: '100svh',
@@ -165,7 +168,7 @@ export default function Hero() {
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)' }}
           >
             <span style={{ color: 'var(--accent)' }}>$</span>
-            <span>{copied ? 'Copied!' : installCmd}</span>
+            <span>{installCmd}</span>
           </div>
 
           {/* Button B: View on GitHub */}
@@ -205,5 +208,6 @@ export default function Hero() {
         </motion.div>
       </motion.div>
     </section>
+    </>
   );
 }
