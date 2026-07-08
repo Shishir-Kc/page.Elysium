@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Status from './Status';
 
 const containerVariants = {
   hidden: {},
@@ -124,6 +125,11 @@ export default function Hero() {
           >
             Personal Home AI Assistant
           </p>
+        </motion.div>
+
+        {/* Status Tags */}
+        <motion.div variants={itemVariants}>
+          <Status />
         </motion.div>
 
         {/* 5. Buttons */}
