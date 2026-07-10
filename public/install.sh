@@ -45,7 +45,7 @@ if [ -d "$INSTALL_DIR" ]; then
     printf "  [U]pgrade    \xE2\x80\x94 pull latest changes and sync deps\n"
     printf "  [Q]uit       \xE2\x80\x94 do nothing\n"
     printf "Choice [r/R/u/U/q/Q]: "
-    read -r choice
+    read -r choice < /dev/tty
     case "$choice" in
         [Rr])
             rm -rf "$INSTALL_DIR"
