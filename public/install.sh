@@ -88,11 +88,6 @@ case "$KERNEL" in
     fi
     ok "Detected: linux ($OS_NAME${OS_VERSION:+ $OS_VERSION}) [$ARCH]"
     ;;
-  Darwin)
-    OS_NAME="macos"
-    OS_VERSION="$(sw_vers -productVersion 2>/dev/null || echo unknown)"
-    ok "Detected: macos $OS_VERSION [$ARCH]"
-    ;;
   *)
     err "Unsupported OS: $KERNEL"
     exit 1
@@ -101,20 +96,6 @@ esac
 echo ""
 
 # ── System requirements ──────────────────────────────
-step "Checking for Omarchy"
-if ! command -v omarchy >/dev/null 2>&1 && [ ! -d "$HOME/.config/omarchy" ]; then
-    err "Omarchy is required but not detected."
-    exit 1
-fi
-ok "Omarchy detected"
-
-step "Checking desktop environment"
-if [ "$XDG_CURRENT_DESKTOP" != "Hyprland" ] && [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
-    err "Hyprland is required but not detected."
-    exit 1
-fi
-ok "Hyprland detected"
-
 step "Checking RAM"
 total_ram_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 total_ram_gb=$((total_ram_kb / 1024 / 1024))
