@@ -17,10 +17,17 @@ fi
 ok()   { printf "${GREEN}✓${RESET} %s\n" "$1"; }
 step() { printf "${BLUE}→${RESET} %s\n" "$1"; }
 err()  { printf "${RED}✗${RESET} %s\n" "$1"; }
+warn(){ printf "${RED}${BOLD}!${RESET} %s\n" "$1"; }
 
-# ── Title box ─────────────────────────────────────────────
-TITLE="\$ Elysium Agent Installer"
-TAGLINE="A self hosted Life Agent Harness for personal Use"
+# ── Ask helper (reads from /dev/tty) ─────────────────────
+ask() {
+  prompt="$1"
+  printf "%s " "$prompt" > /dev/tty
+  read -r ans < /dev/tty
+  printf '%s' "$ans"
+}
+
+# ── Layout helpers ───────────────────────────────────────
 WIDTH=58
 
 hr() {
@@ -37,6 +44,139 @@ left() {
   text="$1"
   printf "${PURPLE}│${RESET} %s%-*s${PURPLE}│${RESET}\n" "$text" $((WIDTH - ${#text} - 1)) ""
 }
+
+# ── Paths ────────────────────────────────────────────────
+REPO="https://github.com/Shishir-Kc/E.L.Y.S.I.U.M"
+INSTALL_DIR="$HOME/.E.L.Y.S.I.U.M"
+CONFIG_DIR="$HOME/.config/E.L.Y.S.I.U.M"
+LOGS_DIR="$CONFIG_DIR/Logs"
+MEMORY_DIR="$CONFIG_DIR/Memory"
+SKILLS="$CONFIG_DIR/Skills"
+ELYSIUM_CONFIG="$CONFIG_DIR/Config"
+LAUNCHER="$HOME/.local/bin/romeo"
+BASHRC="$HOME/.bashrc"
+
+remove_launcher() {
+  if [ -f "$LAUNCHER" ]; then
+    rm -f "$LAUNCHER"
+    ok "Removed launcher: $LAUNCHER"
+  fi
+  if [ -w "$BASHRC" ]; then
+    tmp="$(mktemp)"
+    grep -Fvx 'export PATH="$HOME/.local/bin:$PATH"' "$BASHRC" > "$tmp" 2>/dev/null || true
+    if [ -s "$tmp" ] || [ ! -s "$BASHRC" ]; then
+      mv "$tmp" "$BASHRC"
+    else
+      rm -f "$tmp"
+    fi
+    ok "Removed PATH entry from $BASHRC"
+  fi
+}
+
+remove_code() {
+  if [ -d "$INSTALL_DIR" ]; then
+    rm -rf "$INSTALL_DIR"
+    ok "Removed E.L.Y.S.I.U.M code install: $INSTALL_DIR"
+  else
+    step "No code install found at $INSTALL_DIR"
+  fi
+  remove_launcher
+}
+
+# ── Two-step config removal ──────────────────────────────
+remove_config() {
+  if [ ! -d "$CONFIG_DIR" ]; then
+    step "No config found at $CONFIG_DIR"
+    return 0
+  fi
+  echo ""
+  warn "This will DELETE your E.L.Y.S.I.U.M configuration directory:"
+  printf "    ${RED}%s${RESET}\n" "$CONFIG_DIR"
+  echo ""
+  first="$(ask "Continue and review the warning? [y/N]:")"
+  case "$first" in
+    [Yy])
+      ;;
+    *)
+      echo "Aborted. Config was NOT removed."
+      return 1
+      ;;
+  esac
+
+  echo ""
+  printf "${RED}${BOLD}╭──────────────────────────────────────────────────────────╮${RESET}\n"
+  printf "${RED}${BOLD}│  ⚠  FINAL WARNING                                           │${RESET}\n"
+  printf "${RED}${BOLD}│  This will delete EVERY memory and config you have created. │${RESET}\n"
+  printf "${RED}${BOLD}│  This action CANNOT be undone.                             │${RESET}\n"
+  printf "${RED}${BOLD}╰──────────────────────────────────────────────────────────╯${RESET}\n"
+  echo ""
+  second="$(ask "Type DELETE to confirm removal:")"
+  if [ "$second" != "DELETE" ]; then
+    echo "Confirmation did not match 'DELETE'. Config was NOT removed."
+    return 1
+  fi
+
+  rm -rf "$CONFIG_DIR"
+  ok "Removed E.L.Y.S.I.U.M config: $CONFIG_DIR"
+}
+
+# ── Uninstall menu ───────────────────────────────────────
+uninstall() {
+  echo ""
+  printf "${PURPLE}╭%s╮${RESET}\n" "$(printf '─%.0s' $(seq 1 58))"
+  center "Elysium Uninstaller"
+  printf "${PURPLE}╰%s╯${RESET}\n" "$(printf '─%.0s' $(seq 1 58))"
+  echo ""
+
+  if [ ! -d "$INSTALL_DIR" ] && [ ! -d "$CONFIG_DIR" ] && [ ! -f "$LAUNCHER" ]; then
+    err "Nothing to uninstall — E.L.Y.S.I.U.M is not present."
+    exit 0
+  fi
+
+  printf "What would you like to remove?\n"
+  printf "  [R]emove code   \xE2\x80\x94 remove the E.L.Y.S.I.U.M install + romeo launcher\n"
+  printf "  [C]onfig        \xE2\x80\x94 remove your E.L.Y.S.I.U.M config (2-step confirm)\n"
+  printf "  [A]ll           \xE2\x80\x94 remove code AND config (config needs 2-step confirm)\n"
+  printf "  [Q]uit          \xE2\x80\x94 do nothing\n"
+  printf "Choice [r/R/c/C/a/A/q/Q]: "
+  read -r choice < /dev/tty
+
+  case "$choice" in
+    [Rr])
+      remove_code
+      ;;
+    [Cc])
+      remove_config
+      ;;
+    [Aa])
+      remove_code
+      remove_config
+      ;;
+    [Qq])
+      echo "Aborted."
+      exit 0
+      ;;
+    *)
+      err "Invalid choice. Aborted."
+      exit 1
+      ;;
+  esac
+  echo ""
+  ok "Uninstall complete."
+  exit 0
+}
+
+# ── Route: uninstall mode (after helpers are defined) ────
+case "${1:-}" in
+  -u|--uninstall)
+    uninstall
+    ;;
+esac
+
+
+# ── Title box ─────────────────────────────────────────────
+TITLE="\$ Elysium Agent Installer"
+TAGLINE="A self hosted Life Agent Harness for personal Use"
 
 echo ""
 printf "${PURPLE}╭%s╮${RESET}\n" "$(printf '─%.0s' $(seq 1 "$WIDTH"))"
@@ -137,14 +277,6 @@ cat << "EOF"
    ╚══════╝   ╚══════╝   ░░░╚═╝░░░   ╚═════╝░   ╚═╝   ░╚═════╝░   ╚═╝░░░░░╚═╝
 EOF
 echo ""
-
-REPO="https://github.com/Shishir-Kc/E.L.Y.S.I.U.M"
-INSTALL_DIR="$HOME/.E.L.Y.S.I.U.M"
-CONFIG_DIR="$HOME/.config/E.L.Y.S.I.U.M"
-LOGS_DIR="$CONFIG_DIR/Logs"
-MEMORY_DIR="$CONFIG_DIR/Memory"
-SKILLS="$CONFIG_DIR/Skills"
-ELYSIUM_CONFIG="$CONFIG_DIR/Config"
 
 # ── Handle existing install ──────────────────────────────
 if [ -d "$INSTALL_DIR" ]; then
